@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Provider Directory Search</title>
+<style>
+  :root{
+    --ink:#1C2B33;
+    --muted:#5B6B72;
+    --line:#DCE3E3;
+    --bg:#FAFAF9;
+    --card:#FFFFFF;
+    --accent:#2D6A6A;
+    --accent-soft:#E7F0EF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    padding:32px 20px;
+  }
+  .wrap{max-width:900px;margin:0 auto;}
+  .logo{
+    display:block;
+    height:36px;
+    width:auto;
+    margin-bottom:16px;
+  }
+  h1{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 4px 0;
+    letter-spacing:-0.01em;
+  }
+  .scope-line{
+    color:var(--ink);
+    font-size:17px;
+    font-weight:500;
+    margin:0 0 14px 0;
+  }
+  .scope-line strong{
+    color:var(--ink);
+    font-weight:700;
+  }
+  .scope-line .scope-count{
+    color:var(--muted);
+    font-weight:600;
+    font-size:15px;
+  }
+  .search-bar{
+    position:relative;
+    margin-bottom:18px;
+  }
+  .search-bar input{
+    width:100%;
+    padding:14px 44px 14px 16px;
+    font-size:16px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  .search-bar input:focus{
+    border-color:var(--accent);
+  }
+  .search-bar svg{
+    position:absolute;
+    right:14px;
+    top:50%;
+    transform:translateY(-50%);
+    width:18px;
+    height:18px;
+    color:var(--muted);
+    pointer-events:none;
+  }
+  .status{
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:14px;
+    min-height:18px;
+  }
+  .results{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px 16px;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .card .photo{
+    width:76px;
+    height:76px;
+    border-radius:12px;
+    object-fit:cover;
+    flex-shrink:0;
+    background:var(--accent-soft);
+    cursor:zoom-in;
+    transition:transform .15s ease;
+  }
+  .card .photo:hover{
+    transform:scale(1.05);
+  }
+  .photo-preview{
+    display:none;
+    position:fixed;
+    z-index:1000;
+    pointer-events:none;
+    border-radius:14px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);
+    overflow:hidden;
+  }
+  .photo-preview.visible{
+    display:block;
+  }
+  .photo-preview img{
+    display:block;
+    width:260px;
+    height:260px;
+    object-fit:cover;
+  }
+  .photo-lightbox{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(28,43,51,0.75);
+    z-index:1100;
+    align-items:center;
+    justify-content:center;
+    padding:32px;
+    cursor:zoom-out;
+  }
+  .photo-lightbox.open{
+    display:flex;
+  }
+  .photo-lightbox img{
+    max-width:min(420px, 90vw);
+    max-height:80vh;
+    border-radius:14px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);
+    object-fit:cover;
+  }
+  .card .card-body{
+    flex:1;
+    min-width:0;
+  }
+  .card .name{
+    font-size:15px;
+    font-weight:700;
+    margin-bottom:6px;
+    color:var(--ink);
+  }
+  .card .fields{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 16px;
+    font-size:13.5px;
+    color:var(--muted);
+  }
+  .card .fields span b{
+    color:var(--ink);
+    font-weight:600;
+  }
+  mark{
+    background:var(--accent-soft);
+    color:var(--accent);
+    border-radius:3px;
+    padding:0 2px;
+  }
+  .empty, .error{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--muted);
+    font-size:14px;
+  }
+  .error{color:#B3402A;}
+  .skeleton{
+    height:64px;
+    border-radius:10px;
+    background:linear-gradient(90deg, #F0F0EE 25%, #F7F7F5 37%, #F0F0EE 63%);
+    background-size:400% 100%;
+    animation:shimmer 1.4s ease infinite;
+  }
+  @keyframes shimmer{
+    0%{background-position:100% 0;}
+    100%{background-position:0 0;}
+  }
+  .reset-btn{
+    border:none;
+    background:none;
+    color:var(--accent);
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    padding:6px 4px;
+    text-decoration:underline;
+    text-underline-offset:2px;
+  }
+  .reset-btn:hover{
+    color:#1f4d4d;
+  }
+  .filter-bar{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:16px;
+    margin-bottom:18px;
+  }
+  .filter-group{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .filter-label{
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:var(--muted);
+  }
+  .filter-btn{
+    border:1.5px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    font-size:13px;
+    font-weight:600;
+    padding:6px 14px;
+    border-radius:100px;
+    cursor:pointer;
+    transition:background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .filter-btn:hover{
+    border-color:var(--accent);
+  }
+  .filter-btn.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  .filter-select{
+    border:1.5px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    font-size:13px;
+    font-weight:600;
+    padding:6px 30px 6px 14px;
+    border-radius:100px;
+    cursor:pointer;
+    outline:none;
+    appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6B72' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 10px center;
+    background-size:14px;
+  }
+  .filter-select:focus{
+    border-color:var(--accent);
+  }
+  .count-pill{
+    display:inline-block;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-size:12px;
+    font-weight:600;
+    padding:2px 8px;
+    border-radius:100px;
+    margin-left:8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="logo" src="data:image/png;base64,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" alt="Company logo" />
+  <h1>Provider Search Tool</h1>
+
+  <div class="search-bar">
+    <input id="searchInput" type="text" placeholder="Search by name..." autocomplete="off" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </div>
+
+  <div class="filter-bar" id="filterBar"></div>
+
+  <div class="status" id="status"></div>
+  <p class="scope-line" id="scopeLine">Showing <strong>all</strong> providers.</p>
+  <div class="results" id="results">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  </div>
+</div>
+
+<div class="photo-preview" id="photoPreview">
+  <img id="photoPreviewImg" src="" alt="" />
+</div>
+
+<div class="photo-lightbox" id="photoLightbox">
+  <img id="photoLightboxImg" src="" alt="" />
+</div>
+
+<script>
+  // ====== CONFIGURE THIS ======
+  const SHEET_ID = "1Z6zMinNwN3wG-ZvURG3S25BGWlvz-PLAtK7MpHBGZgA";
+  // If you want a specific tab, set its name here, e.g. "Sheet1". Leave null to use the first sheet.
+  const SHEET_NAME = null;
+  // ============================
+
+  let allRows = [];
+  let headers = [];
+  let activeType = "All";
+  let activeLocation = "All";
+  let activeTitle = "All";
+  let sortDirection = "asc";
+
+  function buildUrl(){
+    let url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    if (SHEET_NAME) url += `&sheet=${encodeURIComponent(SHEET_NAME)}`;
+    return url;
+  }
+
+  // Google's gviz endpoint responds via a JS callback (JSONP-style),
+  // so we load it as a <script> tag rather than fetch(), which sidesteps
+  // CORS restrictions on cross-origin reads of the spreadsheet.
+  window.google = {
+    visualization: {
+      Query: {
+        setResponse: function(data){
+          try{
+            const cols = data.table.cols.map(c => (c.label || c.id || "").trim());
+            headers = cols.map((c,i) => c || `Column ${i+1}`);
+
+            allRows = data.table.rows.map(r => {
+              const obj = {};
+              r.c.forEach((cell, i) => {
+                const val = cell ? (cell.f !== undefined && cell.f !== null ? cell.f : cell.v) : "";
+                obj[headers[i]] = val === null || val === undefined ? "" : String(val);
+              });
+              return obj;
+            }).filter(row => Object.values(row).some(v => v && v.trim() !== ""));
+
+            populateFilters();
+            render(document.getElementById('searchInput').value);
+          }catch(err){
+            showError("Could not read the spreadsheet data. Double check the sheet is shared as 'Anyone with the link can view'.");
+          }
+        }
+      }
+    }
+  };
+
+  function showError(msg){
+    document.getElementById('status').textContent = "";
+    document.getElementById('results').innerHTML = `<div class="error">${msg}</div>`;
+  }
+
+  function loadSheet(){
+    const script = document.createElement('script');
+    script.src = buildUrl();
+    script.onerror = () => showError("Couldn't reach the spreadsheet. Make sure it's shared as 'Anyone with the link can view'.");
+    document.body.appendChild(script);
+  }
+
+  function populateFilters(){
+    const filterBar = document.getElementById('filterBar');
+    const typeKey = headers.find(h => /^type$/i.test(h));
+    const locationKey = headers.find(h => /^location$/i.test(h));
+    const titleKey = headers.find(h => /^title$/i.test(h));
+
+    let html = "";
+
+    if (typeKey){
+      const types = [...new Set(allRows.map(r => (r[typeKey] || "").trim()).filter(Boolean))].sort();
+      html += `<div class="filter-group">
+        <span class="filter-label">Type</span>
+        <button class="filter-btn active" data-filter="type" data-value="All">All</button>
+        ${types.map(t => `<button class="filter-btn" data-filter="type" data-value="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join("")}
+      </div>`;
+    }
+
+    if (locationKey){
+      const locations = [...new Set(allRows.map(r => (r[locationKey] || "").trim()).filter(Boolean))].sort();
+      html += `<div class="filter-group">
+        <span class="filter-label">Location</span>
+        <select class="filter-select" id="locationSelect">
+          <option value="All">All locations</option>
+          ${locations.map(l => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join("")}
+        </select>
+      </div>`;
+    }
+
+    if (titleKey){
+      const titles = [...new Set(allRows.map(r => (r[titleKey] || "").trim()).filter(Boolean))].sort();
+      html += `<div class="filter-group">
+        <span class="filter-label">Title</span>
+        <select class="filter-select" id="titleSelect">
+          <option value="All">All titles</option>
+          ${titles.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("")}
+        </select>
+      </div>`;
+    }
+
+    filterBar.innerHTML = html;
+
+    filterBar.insertAdjacentHTML('beforeend', `<button class="reset-btn" id="resetFilters">Reset filters</button>`);
+    const resetBtn = document.getElementById('resetFilters');
+    resetBtn.addEventListener('click', () => {
+      activeType = "All";
+      activeLocation = "All";
+      activeTitle = "All";
+      document.getElementById('searchInput').value = "";
+      filterBar.querySelectorAll('button[data-filter="type"]').forEach(b => {
+        b.classList.toggle('active', b.dataset.value === "All");
+      });
+      const locSel = document.getElementById('locationSelect');
+      if (locSel) locSel.value = "All";
+      const titleSel = document.getElementById('titleSelect');
+      if (titleSel) titleSel.value = "All";
+      render("");
+    });
+
+    filterBar.querySelectorAll('button[data-filter="type"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBar.querySelectorAll('button[data-filter="type"]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeType = btn.dataset.value;
+        render(document.getElementById('searchInput').value);
+      });
+    });
+
+    const locationSelect = document.getElementById('locationSelect');
+    if (locationSelect){
+      locationSelect.addEventListener('change', () => {
+        activeLocation = locationSelect.value;
+        render(document.getElementById('searchInput').value);
+      });
+    }
+
+    const titleSelect = document.getElementById('titleSelect');
+    if (titleSelect){
+      titleSelect.addEventListener('change', () => {
+        activeTitle = titleSelect.value;
+        render(document.getElementById('searchInput').value);
+      });
+    }
+  }
+
+  function updateScopeLine(count){
+    const scopeLine = document.getElementById('scopeLine');
+    const parts = [];
+
+    const forItems = [];
+    if (activeType !== "All") forItems.push(`${activeType}s`);
+    if (activeTitle !== "All") forItems.push(activeTitle);
+    if (forItems.length > 0){
+      parts.push(`for ${forItems.map(t => `<strong>${escapeHtml(t)}</strong>`).join(", ")}`);
+    }
+
+    if (activeLocation !== "All"){
+      parts.push(`in <strong>${escapeHtml(activeLocation)}</strong>`);
+    }
+
+    const countText = `<span class="scope-count">(${count} ${count === 1 ? 'result' : 'results'})</span>`;
+
+    if (parts.length === 0){
+      scopeLine.innerHTML = `Showing <strong>all</strong> providers. ${countText}`;
+    } else {
+      scopeLine.innerHTML = `Showing <strong>all</strong> ${parts.join(" ")}. ${countText}`;
+    }
+  }
+
+  function highlight(text, query){
+    if (!query) return escapeHtml(text);
+    const idx = text.toLowerCase().indexOf(query.toLowerCase());
+    if (idx === -1) return escapeHtml(text);
+    return escapeHtml(text.slice(0, idx)) +
+           "<mark>" + escapeHtml(text.slice(idx, idx + query.length)) + "</mark>" +
+           escapeHtml(text.slice(idx + query.length));
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function render(query){
+    const resultsEl = document.getElementById('results');
+    const q = query.trim().toLowerCase();
+    const typeKey = headers.find(h => /^type$/i.test(h));
+    const locationKey = headers.find(h => /^location$/i.test(h));
+    const titleKey = headers.find(h => /^title$/i.test(h));
+
+    let filtered = allRows;
+
+    if (typeKey && activeType !== "All"){
+      filtered = filtered.filter(row => (row[typeKey] || "").trim() === activeType);
+    }
+    if (locationKey && activeLocation !== "All"){
+      filtered = filtered.filter(row => (row[locationKey] || "").trim() === activeLocation);
+    }
+    if (titleKey && activeTitle !== "All"){
+      filtered = filtered.filter(row => (row[titleKey] || "").trim() === activeTitle);
+    }
+    if (q !== ""){
+      filtered = filtered.filter(row => {
+        const fullName = `${row["First Name"] || ""} ${row["Last Name"] || ""}`.toLowerCase();
+        return fullName.includes(q) ||
+          Object.values(row).some(v => v.toLowerCase().includes(q));
+      });
+    }
+
+    const lastNameKey = headers.find(h => /^last(\s|_)?name$/i.test(h));
+    const sortKey = lastNameKey || headers.find(h => /name/i.test(h)) || headers[0];
+    filtered = [...filtered].sort((a, b) => {
+      const cmp = (a[sortKey] || "").toLowerCase().localeCompare((b[sortKey] || "").toLowerCase());
+      return sortDirection === "asc" ? cmp : -cmp;
+    });
+
+    updateScopeLine(filtered.length);
+
+    if (filtered.length === 0){
+      const msg = q === ""
+        ? "No providers match the current filters."
+        : `No providers match "${escapeHtml(query)}".`;
+      resultsEl.innerHTML = `<div class="empty">${msg}</div>`;
+      return;
+    }
+
+    // Combine First Name + Last Name into a single title if both exist,
+    // otherwise fall back to any single "name-like" column.
+    const firstKey = headers.find(h => /^first(\s|_)?name$/i.test(h));
+    const lastKey = headers.find(h => /^last(\s|_)?name$/i.test(h));
+    const fallbackNameKey = headers.find(h => /name/i.test(h)) || headers[0];
+
+    resultsEl.innerHTML = filtered.slice(0, 200).map(row => {
+      let name, skipKeys;
+      if (firstKey && lastKey){
+        name = `${row[firstKey] || ""} ${row[lastKey] || ""}`.trim() || "—";
+        skipKeys = [firstKey, lastKey];
+      } else {
+        name = row[fallbackNameKey] || "—";
+        skipKeys = [fallbackNameKey];
+      }
+      if (titleKey){
+        skipKeys.push(titleKey);
+        if (row[titleKey] && row[titleKey].trim()){
+          name = `${name}, ${row[titleKey].trim()}`;
+        }
+      }
+
+      const photoUrlKey = headers.find(h => /^photo(\s|_)?(url)?$/i.test(h));
+      const photoSrc = photoUrlKey && row[photoUrlKey] && row[photoUrlKey].trim();
+
+      const otherFields = headers
+        .filter(h => !skipKeys.includes(h) && h !== photoUrlKey && row[h])
+        .map(h => `<span><b>${escapeHtml(h)}:</b> ${highlight(row[h], query)}</span>`)
+        .join("");
+
+      const photoHtml = photoSrc
+        ? `<img class="photo" src="${escapeHtml(photoSrc)}" alt="${escapeHtml(name)}" loading="lazy" onerror="this.remove()" />`
+        : "";
+
+      return `
+        <div class="card">
+          ${photoHtml}
+          <div class="card-body">
+            <div class="name">${highlight(name, query)}</div>
+            <div class="fields">${otherFields}</div>
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    render(e.target.value);
+  });
+
+  document.getElementById('results').addEventListener('mouseover', (e) => {
+    const img = e.target.closest('.photo');
+    if (!img) return;
+    const preview = document.getElementById('photoPreview');
+    const previewImg = document.getElementById('photoPreviewImg');
+    previewImg.src = img.src;
+    previewImg.alt = img.alt;
+    preview.classList.add('visible');
+    positionPreview(e, img);
+  });
+
+  document.getElementById('results').addEventListener('mousemove', (e) => {
+    const img = e.target.closest('.photo');
+    if (!img) return;
+    positionPreview(e, img);
+  });
+
+  document.getElementById('results').addEventListener('mouseout', (e) => {
+    const img = e.target.closest('.photo');
+    if (!img) return;
+    // Only hide if we're not moving onto the preview itself or staying within the image
+    if (e.relatedTarget && e.relatedTarget.closest('.photo') === img) return;
+    document.getElementById('photoPreview').classList.remove('visible');
+  });
+
+  function positionPreview(e, img){
+    const preview = document.getElementById('photoPreview');
+    const previewSize = 260;
+    const margin = 16;
+    let left = e.clientX + margin;
+    let top = e.clientY + margin;
+
+    if (left + previewSize > window.innerWidth) left = e.clientX - previewSize - margin;
+    if (top + previewSize > window.innerHeight) top = e.clientY - previewSize - margin;
+    if (left < 0) left = margin;
+    if (top < 0) top = margin;
+
+    preview.style.left = left + 'px';
+    preview.style.top = top + 'px';
+  }
+
+  document.getElementById('results').addEventListener('click', (e) => {
+    const img = e.target.closest('.photo');
+    if (!img) return;
+    document.getElementById('photoPreview').classList.remove('visible');
+    const lightbox = document.getElementById('photoLightbox');
+    const lightboxImg = document.getElementById('photoLightboxImg');
+    lightboxImg.src = img.src;
+    lightboxImg.alt = img.alt;
+    lightbox.classList.add('open');
+  });
+
+  document.getElementById('photoLightbox').addEventListener('click', () => {
+    document.getElementById('photoLightbox').classList.remove('open');
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape'){
+      document.getElementById('photoLightbox').classList.remove('open');
+    }
+  });
+
+  loadSheet();
+</script>
+</body>
+</html>
