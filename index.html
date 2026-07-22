@@ -159,6 +159,12 @@
     margin-bottom:6px;
     color:var(--ink);
   }
+  .card .new-patients-closed{
+    font-size:13px;
+    font-weight:600;
+    color:#B3402A;
+    margin:-2px 0 8px 0;
+  }
   .card .fields{
     display:flex;
     flex-wrap:wrap;
@@ -346,8 +352,9 @@
     "Type",
     "Sex",
     "NPI",
-    "License",
     "Age Range",
+    "New Patients",
+    "Any Patients",
     "Biography",
     "Photo URL"
   ];
@@ -459,6 +466,15 @@
       </div>`;
     }
 
+    if (sexKey){
+      const sexes = [...new Set(allRows.map(r => (r[sexKey] || "").trim()).filter(Boolean))].sort();
+      html += `<div class="filter-group">
+        <span class="filter-label">Sex</span>
+        <button class="filter-btn active" data-filter="sex" data-value="All">All</button>
+        ${sexes.map(s => `<button class="filter-btn" data-filter="sex" data-value="${escapeHtml(s)}">${escapeHtml(s)}</button>`).join("")}
+      </div>`;
+    }
+
     if (locationKey){
       const locations = [...new Set(allRows.map(r => (r[locationKey] || "").trim()).filter(Boolean))]
         .sort((a, b) => {
@@ -491,6 +507,9 @@
       filterBar.querySelectorAll('button[data-filter="location"]').forEach(b => {
         b.classList.toggle('active', b.dataset.value === "All");
       });
+      filterBar.querySelectorAll('button[data-filter="sex"]').forEach(b => {
+        b.classList.toggle('active', b.dataset.value === "All");
+      });
       render("");
     });
 
@@ -508,6 +527,15 @@
         filterBar.querySelectorAll('button[data-filter="location"]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         activeLocation = btn.dataset.value;
+        render(document.getElementById('searchInput').value);
+      });
+    });
+
+    filterBar.querySelectorAll('button[data-filter="sex"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBar.querySelectorAll('button[data-filter="sex"]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeSex = btn.dataset.value;
         render(document.getElementById('searchInput').value);
       });
     });
@@ -631,10 +659,27 @@
       const bioKey = headers.find(h => /^biography$/i.test(h));
       if (bioKey) skipKeys.push(bioKey);
 
+      const newPatientsKey = headers.find(h => /^new(\s|_)?patients$/i.test(h));
+      if (newPatientsKey) skipKeys.push(newPatientsKey);
+
+      const anyPatientsKey = headers.find(h => /^any(\s|_)?patients$/i.test(h));
+      if (anyPatientsKey) skipKeys.push(anyPatientsKey);
+
       const otherFields = headers
         .filter(h => !skipKeys.includes(h) && h !== photoUrlKey && row[h])
         .map(h => `<span><b>${escapeHtml(h)}:</b> ${h === locationKey ? highlight(formatLocation(row[h]), query) : highlight(row[h], query)}</span>`)
         .join("");
+
+      const patientMessages = [];
+      if (newPatientsKey && /^no$/i.test((row[newPatientsKey] || "").trim())){
+        patientMessages.push("Currently not accepting new patients.");
+      }
+      if (anyPatientsKey && /^no$/i.test((row[anyPatientsKey] || "").trim())){
+        patientMessages.push("Currently not accepting any patients.");
+      }
+      const patientMessagesHtml = patientMessages.length
+        ? `<div class="new-patients-closed">${patientMessages.join(" ")}</div>`
+        : "";
 
       let bioHtml = "";
       if (bioKey && row[bioKey] && row[bioKey].trim()){
@@ -654,6 +699,7 @@
           ${photoHtml}
           <div class="card-body">
             <div class="name">${highlight(name, query)}</div>
+            ${patientMessagesHtml}
             <div class="fields">${otherFields}</div>
             ${bioHtml}
           </div>
