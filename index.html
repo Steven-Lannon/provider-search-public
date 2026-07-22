@@ -10,10 +10,17 @@
     --line:#DCE3E3;
     --bg:#FAFAF9;
     --card:#FFFFFF;
-    --accent:#2D6A6A;
-    --accent-soft:#E7F0EF;
+    --accent:#22345A;
+    --accent-soft:#E8EBF2;
   }
   *{box-sizing:border-box;}
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  .card:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:2px;
+  }
   body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
@@ -21,7 +28,7 @@
     color:var(--ink);
     padding:32px 20px;
   }
-  .wrap{max-width:900px;margin:0 auto;}
+  .wrap{max-width:1320px;margin:0 auto;}
   .logo{
     display:block;
     height:36px;
@@ -84,49 +91,79 @@
     min-height:18px;
   }
   .results{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:14px;
+    align-items:start;
+  }
+  @media (max-width:1100px){
+    .results{grid-template-columns:repeat(3, 1fr);}
+  }
+  @media (max-width:860px){
+    .results{grid-template-columns:repeat(2, 1fr);}
+  }
+  @media (max-width:600px){
+    .results{grid-template-columns:1fr;}
   }
   .card{
     background:var(--card);
     border:1px solid var(--line);
     border-radius:10px;
-    padding:14px 16px;
+    padding:16px;
     display:flex;
-    gap:14px;
-    align-items:flex-start;
+    flex-direction:column;
+    height:100%;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .card:hover{
+    border-color:#C7D2D2;
+    box-shadow:0 4px 16px rgba(28,43,51,0.06);
+  }
+  .card .card-header{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:10px;
+    margin-bottom:10px;
   }
   .card .photo{
-    width:76px;
-    height:76px;
-    border-radius:12px;
+    width:120px;
+    height:120px;
+    border-radius:50%;
     object-fit:cover;
     flex-shrink:0;
     background:var(--accent-soft);
     cursor:zoom-in;
-    transition:transform .15s ease;
   }
-  .card .photo:hover{
-    transform:scale(1.05);
+  .card .photo-initials{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--accent);
+    font-weight:700;
+    font-size:34px;
+    cursor:default;
   }
-  .photo-preview{
-    display:none;
-    position:fixed;
-    z-index:1000;
-    pointer-events:none;
-    border-radius:14px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.35);
-    overflow:hidden;
+  .card .card-heading{
+    min-width:0;
   }
-  .photo-preview.visible{
-    display:block;
+  .card .location-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:2px 9px;
+    border-radius:100px;
+    margin-top:3px;
   }
-  .photo-preview img{
-    display:block;
-    width:260px;
-    height:260px;
-    object-fit:cover;
+  .card .location-badge svg{
+    width:11px;
+    height:11px;
+    flex-shrink:0;
   }
   .photo-lightbox{
     display:none;
@@ -150,56 +187,80 @@
     object-fit:cover;
   }
   .card .card-body{
-    flex:1;
     min-width:0;
+    display:flex;
+    flex-direction:column;
+    flex:1;
   }
   .card .name{
-    font-size:15px;
+    font-size:14.5px;
     font-weight:700;
-    margin-bottom:6px;
     color:var(--ink);
+    line-height:1.3;
   }
   .card .new-patients-closed{
-    font-size:13px;
+    font-size:12.5px;
     font-weight:600;
     color:#B3402A;
-    margin:-2px 0 8px 0;
+    margin:8px 0 0 0;
+  }
+  .card .new-patients-open{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:12px;
+    font-weight:700;
+    color:#1F6B49;
+    background:#E4F3EC;
+    padding:3px 10px;
+    border-radius:100px;
+    margin:8px 0 0 0;
+  }
+  .card .new-patients-open svg{
+    width:12px;
+    height:13px;
+    flex-shrink:0;
   }
   .card .telehealth-note{
-    font-size:13px;
+    font-size:12.5px;
     color:var(--muted);
-    margin:-2px 0 8px 0;
+    margin:8px 0 0 0;
   }
   .card .fields{
     display:flex;
-    flex-wrap:wrap;
-    gap:6px 16px;
-    font-size:13.5px;
+    flex-direction:column;
+    gap:5px;
+    font-size:13px;
     color:var(--muted);
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid var(--line);
   }
   .card .fields span b{
     color:var(--ink);
     font-weight:600;
   }
   .card .bio{
-    margin-top:8px;
-    font-size:13.5px;
+    margin-top:auto;
+    padding-top:10px;
+    font-size:13px;
     line-height:1.5;
     color:var(--muted);
   }
   .bio-toggle{
-    border:none;
-    background:none;
-    color:var(--accent);
+    border:1.5px solid var(--accent);
+    background:var(--accent);
+    color:#fff;
     font-size:13px;
     font-weight:600;
     cursor:pointer;
-    padding:0 0 0 4px;
-    text-decoration:underline;
-    text-underline-offset:2px;
+    padding:6px 14px;
+    border-radius:8px;
+    transition:background .15s ease, border-color .15s ease;
   }
   .bio-toggle:hover{
-    color:#1f4d4d;
+    background:#16223C;
+    border-color:#16223C;
   }
   mark{
     background:var(--accent-soft);
@@ -208,15 +269,34 @@
     padding:0 2px;
   }
   .empty, .error{
+    grid-column:1 / -1;
     text-align:center;
     padding:40px 20px;
     color:var(--muted);
     font-size:14px;
   }
   .error{color:#B3402A;}
-  .skeleton{
-    height:64px;
+  .skeleton-card{
+    background:var(--card);
+    border:1px solid var(--line);
     border-radius:10px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+  }
+  .skeleton-avatar{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:linear-gradient(90deg, #F0F0EE 25%, #F7F7F5 37%, #F0F0EE 63%);
+    background-size:400% 100%;
+    animation:shimmer 1.4s ease infinite;
+  }
+  .skeleton-line{
+    height:12px;
+    border-radius:6px;
     background:linear-gradient(90deg, #F0F0EE 25%, #F7F7F5 37%, #F0F0EE 63%);
     background-size:400% 100%;
     animation:shimmer 1.4s ease infinite;
@@ -237,7 +317,7 @@
     text-underline-offset:2px;
   }
   .reset-btn:hover{
-    color:#1f4d4d;
+    color:#16223C;
   }
   .filter-bar{
     display:flex;
@@ -324,14 +404,11 @@
   <div class="status" id="status"></div>
   <p class="scope-line" id="scopeLine">Showing <strong>all</strong> providers.</p>
   <div class="results" id="results">
-    <div class="skeleton"></div>
-    <div class="skeleton"></div>
-    <div class="skeleton"></div>
+    <div class="skeleton-card"><div class="skeleton-avatar"></div><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:45%"></div></div>
+    <div class="skeleton-card"><div class="skeleton-avatar"></div><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:45%"></div></div>
+    <div class="skeleton-card"><div class="skeleton-avatar"></div><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:45%"></div></div>
+    <div class="skeleton-card"><div class="skeleton-avatar"></div><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:45%"></div></div>
   </div>
-</div>
-
-<div class="photo-preview" id="photoPreview">
-  <img id="photoPreviewImg" src="" alt="" />
 </div>
 
 <div class="photo-lightbox" id="photoLightbox">
@@ -360,7 +437,6 @@
     "Age Range",
     "New Patients",
     "Any Patients",
-    "Biography",
     "Photo URL"
   ];
   // ============================
@@ -377,6 +453,15 @@
     "syosset": "NY",
     "wilmington": "NC"
   };
+
+  // Builds a 1-2 letter initials string for the fallback avatar when a
+  // provider has no photo (e.g. "Gabrielle Bellamente" -> "GB").
+  function initials(name){
+    const parts = (name || "").trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "?";
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
 
   function formatLocation(loc){
     if (!loc) return loc;
@@ -453,6 +538,18 @@
     document.body.appendChild(script);
   }
 
+  function resetAllFilters(){
+    activeType = "All";
+    activeLocation = "All";
+    activeTitle = "All";
+    activeSex = "All";
+    document.getElementById('searchInput').value = "";
+    document.querySelectorAll('#filterBar button[data-filter]').forEach(b => {
+      b.classList.toggle('active', b.dataset.value === "All");
+    });
+    render("");
+  }
+
   function populateFilters(){
     const filterBar = document.getElementById('filterBar');
     const typeKey = headers.find(h => /^type$/i.test(h));
@@ -497,26 +594,6 @@
     }
 
     filterBar.innerHTML = html;
-
-    filterBar.insertAdjacentHTML('beforeend', `<button class="reset-btn" id="resetFilters">Reset filters</button>`);
-    const resetBtn = document.getElementById('resetFilters');
-    resetBtn.addEventListener('click', () => {
-      activeType = "All";
-      activeLocation = "All";
-      activeTitle = "All";
-      activeSex = "All";
-      document.getElementById('searchInput').value = "";
-      filterBar.querySelectorAll('button[data-filter="type"]').forEach(b => {
-        b.classList.toggle('active', b.dataset.value === "All");
-      });
-      filterBar.querySelectorAll('button[data-filter="location"]').forEach(b => {
-        b.classList.toggle('active', b.dataset.value === "All");
-      });
-      filterBar.querySelectorAll('button[data-filter="sex"]').forEach(b => {
-        b.classList.toggle('active', b.dataset.value === "All");
-      });
-      render("");
-    });
 
     filterBar.querySelectorAll('button[data-filter="type"]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -568,10 +645,17 @@
 
     const countText = `<span class="scope-count">(${count} ${count === 1 ? 'result' : 'results'})</span>`;
 
+    const query = document.getElementById('searchInput').value.trim();
+    const anyFilterActive = activeType !== "All" || activeLocation !== "All" ||
+      activeTitle !== "All" || activeSex !== "All" || query !== "";
+    const resetHtml = anyFilterActive
+      ? ` <button type="button" class="reset-btn" id="scopeResetFilters">Reset filters</button>`
+      : "";
+
     if (parts.length === 0){
-      scopeLine.innerHTML = `Showing <strong>all</strong> providers. ${countText}`;
+      scopeLine.innerHTML = `Showing <strong>all</strong> providers. ${countText}${resetHtml}`;
     } else {
-      scopeLine.innerHTML = `Showing <strong>all</strong> ${parts.join(" ")}. ${countText}`;
+      scopeLine.innerHTML = `Showing <strong>all</strong> ${parts.join(" ")}. ${countText}${resetHtml}`;
     }
   }
 
@@ -651,6 +735,7 @@
         name = row[fallbackNameKey] || "—";
         skipKeys = [fallbackNameKey];
       }
+      const plainName = name;
       if (titleKey){
         skipKeys.push(titleKey);
         if (row[titleKey] && row[titleKey].trim()){
@@ -661,19 +746,22 @@
       const photoUrlKey = headers.find(h => /^photo(\s|_)?(url)?$/i.test(h));
       const photoSrc = photoUrlKey && row[photoUrlKey] && row[photoUrlKey].trim();
 
-      const bioKey = headers.find(h => /^biography$/i.test(h));
-      if (bioKey) skipKeys.push(bioKey);
-
       const newPatientsKey = headers.find(h => /^new(\s|_)?patients$/i.test(h));
       if (newPatientsKey) skipKeys.push(newPatientsKey);
 
       const anyPatientsKey = headers.find(h => /^any(\s|_)?patients$/i.test(h));
       if (anyPatientsKey) skipKeys.push(anyPatientsKey);
 
+      if (locationKey) skipKeys.push(locationKey);
+      const locationBadgeHtml = (locationKey && row[locationKey] && row[locationKey].trim())
+        ? `<span class="location-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>${highlight(formatLocation(row[locationKey]), query)}</span>`
+        : "";
+
       const otherFields = headers
         .filter(h => !skipKeys.includes(h) && h !== photoUrlKey && row[h])
         .map(h => `<span><b>${escapeHtml(h)}:</b> ${h === locationKey ? highlight(formatLocation(row[h]), query) : highlight(row[h], query)}</span>`)
         .join("");
+      const fieldsHtml = otherFields ? `<div class="fields">${otherFields}</div>` : "";
 
       const patientMessages = [];
       if (newPatientsKey && /^no$/i.test((row[newPatientsKey] || "").trim())){
@@ -686,32 +774,37 @@
         ? `<div class="new-patients-closed">${patientMessages.join(" ")}</div>`
         : "";
 
+      const acceptingNewHtml = (newPatientsKey && /^yes$/i.test((row[newPatientsKey] || "").trim()))
+        ? `<div class="new-patients-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Accepting new patients.</div>`
+        : "";
+
       const notAcceptingNew = newPatientsKey && /^no$/i.test((row[newPatientsKey] || "").trim());
       const telehealthHtml = (locationKey && /^remote$/i.test((row[locationKey] || "").trim()) && !notAcceptingNew)
         ? `<div class="telehealth-note">Telehealth appointments only.</div>`
         : "";
 
-      let bioHtml = "";
-      if (bioKey && row[bioKey] && row[bioKey].trim()){
-        const fullBio = row[bioKey].trim();
-        bioHtml = `<div class="bio" data-full="${encodeURIComponent(fullBio)}" data-expanded="false">
-          <span class="bio-text"></span>
-          <button type="button" class="bio-toggle">Read biography</button>
+      const bioHtml = `<div class="bio">
+          <button type="button" class="bio-toggle">Read Biography</button>
         </div>`;
-      }
 
       const photoHtml = photoSrc
         ? `<img class="photo" src="${escapeHtml(photoSrc)}" alt="${escapeHtml(name)}" loading="lazy" onerror="this.remove()" />`
-        : "";
+        : `<div class="photo photo-initials">${escapeHtml(initials(plainName))}</div>`;
 
       return `
         <div class="card">
-          ${photoHtml}
+          <div class="card-header">
+            ${photoHtml}
+            <div class="card-heading">
+              <div class="name">${highlight(name, query)}</div>
+              ${locationBadgeHtml}
+            </div>
+          </div>
           <div class="card-body">
-            <div class="name">${highlight(name, query)}</div>
+            ${acceptingNewHtml}
             ${telehealthHtml}
             ${patientMessagesHtml}
-            <div class="fields">${otherFields}</div>
+            ${fieldsHtml}
             ${bioHtml}
           </div>
         </div>`;
@@ -723,70 +816,8 @@
   });
 
   document.getElementById('results').addEventListener('click', (e) => {
-    const btn = e.target.closest('.bio-toggle');
-    if (!btn) return;
-    const bioEl = btn.closest('.bio');
-    const textEl = bioEl.querySelector('.bio-text');
-    const full = decodeURIComponent(bioEl.dataset.full);
-    const expanded = bioEl.dataset.expanded === "true";
-    const query = document.getElementById('searchInput').value;
-
-    if (expanded){
-      textEl.innerHTML = "";
-      btn.textContent = "Read biography";
-      bioEl.dataset.expanded = "false";
-    } else {
-      textEl.innerHTML = highlight(full, query);
-      btn.textContent = "Hide biography";
-      bioEl.dataset.expanded = "true";
-    }
-  });
-
-  document.getElementById('results').addEventListener('mouseover', (e) => {
     const img = e.target.closest('.photo');
     if (!img) return;
-    const preview = document.getElementById('photoPreview');
-    const previewImg = document.getElementById('photoPreviewImg');
-    previewImg.src = img.src;
-    previewImg.alt = img.alt;
-    preview.classList.add('visible');
-    positionPreview(e, img);
-  });
-
-  document.getElementById('results').addEventListener('mousemove', (e) => {
-    const img = e.target.closest('.photo');
-    if (!img) return;
-    positionPreview(e, img);
-  });
-
-  document.getElementById('results').addEventListener('mouseout', (e) => {
-    const img = e.target.closest('.photo');
-    if (!img) return;
-    // Only hide if we're not moving onto the preview itself or staying within the image
-    if (e.relatedTarget && e.relatedTarget.closest('.photo') === img) return;
-    document.getElementById('photoPreview').classList.remove('visible');
-  });
-
-  function positionPreview(e, img){
-    const preview = document.getElementById('photoPreview');
-    const previewSize = 260;
-    const margin = 16;
-    let left = e.clientX + margin;
-    let top = e.clientY + margin;
-
-    if (left + previewSize > window.innerWidth) left = e.clientX - previewSize - margin;
-    if (top + previewSize > window.innerHeight) top = e.clientY - previewSize - margin;
-    if (left < 0) left = margin;
-    if (top < 0) top = margin;
-
-    preview.style.left = left + 'px';
-    preview.style.top = top + 'px';
-  }
-
-  document.getElementById('results').addEventListener('click', (e) => {
-    const img = e.target.closest('.photo');
-    if (!img) return;
-    document.getElementById('photoPreview').classList.remove('visible');
     const lightbox = document.getElementById('photoLightbox');
     const lightboxImg = document.getElementById('photoLightboxImg');
     lightboxImg.src = img.src;
@@ -802,6 +833,10 @@
     if (e.key === 'Escape'){
       document.getElementById('photoLightbox').classList.remove('open');
     }
+  });
+
+  document.getElementById('scopeLine').addEventListener('click', (e) => {
+    if (e.target.closest('#scopeResetFilters')) resetAllFilters();
   });
 
   loadSheet();
