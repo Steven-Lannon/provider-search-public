@@ -165,6 +165,11 @@
     color:#B3402A;
     margin:-2px 0 8px 0;
   }
+  .card .telehealth-note{
+    font-size:13px;
+    color:var(--muted);
+    margin:-2px 0 8px 0;
+  }
   .card .fields{
     display:flex;
     flex-wrap:wrap;
@@ -681,6 +686,11 @@
         ? `<div class="new-patients-closed">${patientMessages.join(" ")}</div>`
         : "";
 
+      const notAcceptingNew = newPatientsKey && /^no$/i.test((row[newPatientsKey] || "").trim());
+      const telehealthHtml = (locationKey && /^remote$/i.test((row[locationKey] || "").trim()) && !notAcceptingNew)
+        ? `<div class="telehealth-note">Telehealth appointments only.</div>`
+        : "";
+
       let bioHtml = "";
       if (bioKey && row[bioKey] && row[bioKey].trim()){
         const fullBio = row[bioKey].trim();
@@ -699,6 +709,7 @@
           ${photoHtml}
           <div class="card-body">
             <div class="name">${highlight(name, query)}</div>
+            ${telehealthHtml}
             ${patientMessagesHtml}
             <div class="fields">${otherFields}</div>
             ${bioHtml}
