@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Provider Directory Search</title>
 <style>
-  :root{
+.pd-widget{
     --ink:#1C2B33;
     --muted:#5B6B72;
     --line:#DCE3E3;
@@ -13,20 +8,20 @@
     --accent:#22345A;
     --accent-soft:#E8EBF2;
   }
-  *{box-sizing:border-box;}
-  button:focus-visible,
-  input:focus-visible,
-  select:focus-visible,
-  .card:focus-visible{
+.pd-widget *{box-sizing:border-box;}
+.pd-widget button:focus-visible,
+.pd-widget input:focus-visible,
+.pd-widget select:focus-visible,
+.pd-widget .card:focus-visible{
     outline:2px solid var(--accent);
     outline-offset:2px;
   }
-  body{
+.pd-widget{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-    color:var(--ink);
+    color:var(--ink) !important;
   }
-  .page-bg{
+.pd-widget .page-bg{
     position:relative;
     left:50%;
     right:50%;
@@ -35,97 +30,94 @@
     width:100vw;
     background:var(--bg);
   }
-  .wrap{
+.pd-widget .wrap{
     max-width:1320px;
     margin:0 auto;
     padding:32px 20px;
   }
-  h1{
+.pd-widget h1{
     font-size:32px;
-    font-weight:700;
+    font-weight:700 !important;
     margin:0 0 8px 0;
     letter-spacing:-0.01em;
   }
-  .scope-line{
-    color:var(--ink);
+.pd-widget .scope-line{
+    color:var(--ink) !important;
     font-size:17px;
-    font-weight:500;
+    font-weight:500 !important;
     margin:0 0 14px 0;
   }
-  .scope-line strong{
-    color:var(--ink);
-    font-weight:700;
+.pd-widget .scope-line strong{
+    color:var(--ink) !important;
+    font-weight:700 !important;
   }
-  .scope-line .scope-count{
-    color:var(--muted);
-    font-weight:600;
+.pd-widget .scope-line .scope-count{
+    color:var(--muted) !important;
+    font-weight:600 !important;
     font-size:15px;
   }
-  .controls-row{
+.pd-widget .controls-row{
     display:flex;
     flex-wrap:wrap;
     align-items:center;
     gap:16px;
     margin-bottom:18px;
   }
-  .search-bar{
+.pd-widget .search-bar{
     position:relative;
     flex:1 1 420px;
     max-width:520px;
   }
-  .search-bar input{
+.pd-widget .search-bar input{
     width:100%;
     padding:14px 44px 14px 16px;
     font-size:16px;
     border:1.5px solid var(--line);
     border-radius:10px;
     background:var(--card);
-    color:var(--ink);
+    color:var(--ink) !important;
     outline:none;
     transition:border-color .15s ease;
   }
-  .search-bar input:focus{
+.pd-widget .search-bar input:focus{
     border-color:var(--accent);
   }
-  .search-bar svg{
+.pd-widget .search-bar svg{
     position:absolute;
     right:14px;
     top:50%;
     transform:translateY(-50%);
     width:18px;
     height:18px;
-    color:var(--muted);
+    color:var(--muted) !important;
     pointer-events:none;
   }
-  .status{
+.pd-widget .status{
     font-size:13px;
-    color:var(--muted);
+    color:var(--muted) !important;
     margin-bottom:14px;
     min-height:18px;
   }
-  .results{
+.pd-widget .results{
     display:grid;
-    grid-template-columns:repeat(4, 1fr);
+    grid-template-columns:repeat(3, 1fr);
     gap:14px;
     align-items:start;
   }
-  @media (max-width:1100px){
-    .results{grid-template-columns:repeat(3, 1fr);}
+
+  @media (max-width:860px){.pd-widget .results{grid-template-columns:repeat(2, 1fr);}
+
   }
-  @media (max-width:860px){
-    .results{grid-template-columns:repeat(2, 1fr);}
-  }
-  @media (max-width:600px){
-    .results{grid-template-columns:1fr;}
-  }
-  .filter-group.location-select-group{
+  @media (max-width:600px){.pd-widget .results{grid-template-columns:1fr;}
+
+  }.pd-widget .filter-group.location-select-group{
     display:none;
   }
-  @media (max-width:640px){
-    .filter-group.location-buttons-group{display:none;}
-    .filter-group.location-select-group{display:flex;}
-  }
-  .card{
+
+  @media (max-width:640px){.pd-widget .filter-group.location-buttons-group{display:none;}
+.pd-widget .filter-group.location-select-group{display:flex;}
+
+  }.pd-widget .card{
     background:var(--card);
     border:1px solid var(--line);
     border-radius:10px;
@@ -135,11 +127,11 @@
     height:100%;
     transition:border-color .15s ease, box-shadow .15s ease;
   }
-  .card:hover{
+.pd-widget .card:hover{
     border-color:#C7D2D2;
     box-shadow:0 4px 16px rgba(28,43,51,0.06);
   }
-  .card .card-header{
+.pd-widget .card .card-header{
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -147,7 +139,7 @@
     gap:10px;
     margin-bottom:10px;
   }
-  .card .photo{
+.pd-widget .card .photo{
     width:120px;
     height:120px;
     border-radius:50%;
@@ -156,36 +148,36 @@
     background:var(--accent-soft);
     cursor:zoom-in;
   }
-  .card .photo-initials{
+.pd-widget .card .photo-initials{
     display:flex;
     align-items:center;
     justify-content:center;
-    color:var(--accent);
-    font-weight:700;
+    color:var(--accent) !important;
+    font-weight:700 !important;
     font-size:34px;
     cursor:default;
   }
-  .card .card-heading{
+.pd-widget .card .card-heading{
     min-width:0;
   }
-  .card .location-badge{
+.pd-widget .card .location-badge{
     display:inline-flex;
     align-items:center;
     gap:4px;
     font-size:11.5px;
-    font-weight:600;
-    color:var(--accent);
+    font-weight:600 !important;
+    color:var(--accent) !important;
     background:var(--accent-soft);
     padding:2px 9px;
     border-radius:100px;
     margin-top:3px;
   }
-  .card .location-badge svg{
+.pd-widget .card .location-badge svg{
     width:11px;
     height:11px;
     flex-shrink:0;
   }
-  .photo-lightbox{
+.pd-widget .photo-lightbox{
     display:none;
     position:fixed;
     inset:0;
@@ -196,110 +188,148 @@
     padding:32px;
     cursor:zoom-out;
   }
-  .photo-lightbox.open{
+.pd-widget .photo-lightbox.open{
     display:flex;
   }
-  .photo-lightbox img{
+.pd-widget .photo-lightbox img{
     max-width:min(420px, 90vw);
     max-height:80vh;
     border-radius:14px;
     box-shadow:0 20px 60px rgba(0,0,0,0.35);
     object-fit:cover;
   }
-  .card .card-body{
+.pd-widget .card .card-body{
     min-width:0;
     display:flex;
     flex-direction:column;
     flex:1;
   }
-  .card .name{
+.pd-widget .card .name{
+    margin:0;
     font-size:14.5px;
-    font-weight:700;
-    color:var(--ink);
+    font-weight:700 !important;
+    color:var(--ink) !important;
     line-height:1.3;
   }
-  .card .new-patients-closed{
+.pd-widget .card .new-patients-closed{
     font-size:12.5px;
-    font-weight:600;
-    color:#B3402A;
+    font-weight:600 !important;
+    color:#B3402A !important;
     margin:8px 0 0 0;
   }
-  .card .new-patients-open{
+.pd-widget .card .new-patients-open{
     display:inline-flex;
     align-items:center;
     gap:5px;
     font-size:12px;
-    font-weight:700;
-    color:#1F6B49;
+    font-weight:700 !important;
+    color:#1F6B49 !important;
     background:#E4F3EC;
     padding:3px 10px;
     border-radius:100px;
     margin:8px 0 0 0;
   }
-  .card .new-patients-open svg{
+.pd-widget .card .new-patients-open svg{
     width:12px;
     height:13px;
     flex-shrink:0;
   }
-  .card .telehealth-note{
+.pd-widget .card .telehealth-note{
+    display:flex;
+    align-items:center;
+    gap:5px;
     font-size:12.5px;
-    color:var(--muted);
+    font-weight:400 !important;
+    color:var(--muted) !important;
     margin:8px 0 0 0;
   }
-  .card .fields{
+.pd-widget .card .telehealth-note svg{
+    width:13px;
+    height:13px;
+    flex-shrink:0;
+  }
+.pd-widget .card .fields{
     display:flex;
     flex-direction:column;
     gap:5px;
     font-size:13px;
-    color:var(--muted);
+    font-weight:400 !important;
+    color:var(--muted) !important;
     margin-top:10px;
     padding-top:10px;
     border-top:1px solid var(--line);
   }
-  .card .fields span b{
-    color:var(--ink);
-    font-weight:600;
+.pd-widget .card .fields span b{
+    color:var(--ink) !important;
+    font-weight:600 !important;
   }
-  .card .bio{
-    margin-top:auto;
+.pd-widget .card .bio{
     padding-top:10px;
     font-size:13px;
+    font-weight:400 !important;
     line-height:1.5;
-    color:var(--muted);
+    color:var(--muted) !important;
   }
-  .card .bio-text{
+.pd-widget .card .bio-text{
     margin:0 0 10px 0;
   }
-  .bio-toggle{
-    border:1.5px solid var(--accent);
-    background:var(--accent);
-    color:#fff;
+.pd-widget .bio-global-toggle{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-left:10px;
+    border:none;
+    background:none;
+    padding:0;
     font-size:13px;
-    font-weight:600;
+    font-weight:600 !important;
+    color:var(--ink) !important;
     cursor:pointer;
-    padding:6px 14px;
-    border-radius:8px;
-    transition:background .15s ease, border-color .15s ease;
+    vertical-align:middle;
+    font-family:inherit;
   }
-  .bio-toggle:hover{
-    background:#16223C;
-    border-color:#16223C;
+.pd-widget .bio-global-toggle-track{
+    position:relative;
+    width:34px;
+    height:20px;
+    flex-shrink:0;
+    border-radius:100px;
+    background:var(--line);
+    transition:background .15s ease;
   }
-  mark{
+.pd-widget .bio-global-toggle-thumb{
+    position:absolute;
+    top:2px;
+    left:2px;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,0.25);
+    transition:transform .15s ease;
+  }
+.pd-widget .bio-global-toggle[aria-pressed="true"] .bio-global-toggle-track{
+    background:var(--accent);
+  }
+.pd-widget .bio-global-toggle[aria-pressed="true"] .bio-global-toggle-thumb{
+    transform:translateX(14px);
+  }
+.pd-widget mark{
     background:var(--accent-soft);
-    color:var(--accent);
+    color:var(--accent) !important;
     border-radius:3px;
     padding:0 2px;
   }
-  .empty, .error{
+.pd-widget .empty,
+.pd-widget .error{
     grid-column:1 / -1;
     text-align:center;
     padding:40px 20px;
-    color:var(--muted);
+    color:var(--muted) !important;
     font-size:14px;
   }
-  .error{color:#B3402A;}
-  .skeleton-card{
+.pd-widget .error{color:#B3402A !important;}
+.pd-widget .skeleton-card{
     background:var(--card);
     border:1px solid var(--line);
     border-radius:10px;
@@ -309,90 +339,90 @@
     align-items:center;
     gap:10px;
   }
-  .skeleton-avatar{
+.pd-widget .skeleton-avatar{
     width:120px;
     height:120px;
     border-radius:50%;
     background:linear-gradient(90deg, #F0F0EE 25%, #F7F7F5 37%, #F0F0EE 63%);
     background-size:400% 100%;
-    animation:shimmer 1.4s ease infinite;
+    animation:pdShimmer 1.4s ease infinite;
   }
-  .skeleton-line{
+.pd-widget .skeleton-line{
     height:12px;
     border-radius:6px;
     background:linear-gradient(90deg, #F0F0EE 25%, #F7F7F5 37%, #F0F0EE 63%);
     background-size:400% 100%;
-    animation:shimmer 1.4s ease infinite;
+    animation:pdShimmer 1.4s ease infinite;
   }
-  @keyframes shimmer{
+
+  @keyframes pdShimmer{
     0%{background-position:100% 0;}
     100%{background-position:0 0;}
-  }
-  .reset-btn{
+  }.pd-widget .reset-btn{
     border:none;
     background:none;
-    color:#C0392B;
+    color:#C0392B !important;
     font-size:13px;
-    font-weight:600;
+    font-weight:600 !important;
     cursor:pointer;
     padding:6px 4px;
     text-decoration:underline;
     text-underline-offset:2px;
   }
-  .reset-btn:hover{
-    color:#8E2A20;
+.pd-widget .reset-btn:hover{
+    color:#8E2A20 !important;
   }
-  .filter-bar{
+.pd-widget .filter-bar{
     display:flex;
     flex-wrap:wrap;
     align-items:center;
     gap:16px;
   }
-  .filter-group{
+.pd-widget .filter-group{
     display:flex;
     align-items:center;
     gap:8px;
     flex-wrap:wrap;
   }
-  .filter-label{
+.pd-widget .filter-label{
     font-size:12px;
-    font-weight:700;
+    font-weight:700 !important;
     text-transform:uppercase;
     letter-spacing:.04em;
-    color:var(--muted);
+    color:var(--muted) !important;
   }
-  .filter-sublabel{
+.pd-widget .filter-sublabel{
     font-size:12px;
-    font-weight:700;
+    font-weight:700 !important;
     text-transform:uppercase;
     letter-spacing:.04em;
-    color:var(--muted);
+    color:var(--muted) !important;
   }
-  .filter-btn{
+.pd-widget .filter-btn{
     border:1.5px solid var(--line);
     background:var(--card);
-    color:var(--ink);
+    color:var(--ink) !important;
     font-size:13px;
-    font-weight:600;
+    font-weight:600 !important;
     padding:6px 14px;
     border-radius:100px;
     cursor:pointer;
     transition:background .15s ease, border-color .15s ease, color .15s ease;
   }
-  .filter-btn:hover{
+.pd-widget .filter-btn:hover{
     border-color:var(--accent);
   }
-  .filter-btn.active{
+.pd-widget .filter-btn.active{
     background:var(--accent);
     border-color:var(--accent);
-    color:#fff;
+    color:#fff !important;
   }
-  .filter-select{
+.pd-widget .filter-select{
     border:1.5px solid var(--line);
     background:var(--card);
-    color:var(--ink);
+    color:var(--ink) !important;
     font-size:13px;
-    font-weight:600;
+    font-weight:600 !important;
     padding:6px 30px 6px 14px;
     border-radius:100px;
     cursor:pointer;
@@ -403,38 +433,82 @@
     background-position:right 10px center;
     background-size:14px;
   }
-  .filter-select:focus{
+.pd-widget .filter-select:focus{
     border-color:var(--accent);
   }
-  .select-wrap{
+.pd-widget .select-wrap{
     position:relative;
     display:inline-flex;
     align-items:center;
   }
-  .select-wrap svg{
+.pd-widget .select-wrap svg{
     position:absolute;
     left:12px;
     width:14px;
     height:14px;
-    color:var(--muted);
+    color:var(--muted) !important;
     pointer-events:none;
   }
-  .select-wrap .filter-select{
+.pd-widget .select-wrap .filter-select{
     padding-left:34px;
   }
-  .count-pill{
+.pd-widget .count-pill{
     display:inline-block;
     background:var(--accent-soft);
-    color:var(--accent);
+    color:var(--accent) !important;
     font-size:12px;
-    font-weight:600;
+    font-weight:600 !important;
     padding:2px 8px;
     border-radius:100px;
     margin-left:8px;
   }
+.pd-widget .scroll-top-btn{
+    position:fixed;
+    left:50%;
+    bottom:24px;
+    z-index:1050;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 22px;
+    border:none;
+    border-radius:100px;
+    background:var(--accent);
+    color:#fff !important;
+    font-size:14px;
+    font-weight:600 !important;
+    white-space:nowrap;
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(28,43,51,0.25);
+    opacity:0;
+    transform:translate(-50%, 12px);
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease, background .15s ease;
+  }
+.pd-widget .scroll-top-btn.visible{
+    opacity:1;
+    transform:translate(-50%, 0);
+    pointer-events:auto;
+  }
+.pd-widget .scroll-top-btn:hover{
+    background:#16223C;
+  }
+.pd-widget .scroll-top-btn svg{
+    width:18px;
+    height:18px;
+    flex-shrink:0;
+  }
+@media (max-width:600px){
+  .pd-widget .scroll-top-btn{
+    bottom:16px;
+    padding:10px 18px;
+    font-size:13px;
+  }
+}
+
+
 </style>
-</head>
-<body>
+<div class="pd-widget">
 <div class="page-bg">
 <div class="wrap">
   <h1 id="pageHeading">Find Your Clinician</h1>
@@ -463,6 +537,11 @@
 <div class="photo-lightbox" id="photoLightbox">
   <img id="photoLightboxImg" src="" alt="" />
 </div>
+
+<button type="button" class="scroll-top-btn" id="scrollTopBtn" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+  Back to top
+</button>
 
 <script>
   // ====== CONFIGURE THIS ======
@@ -527,6 +606,7 @@
   let activeTitle = "All";
   let activeSex = "All";
   let sortDirection = "asc";
+  let biosVisible = true;
   // If this page's URL locks it to a specific type (e.g. /prescribers),
   // "Reset filters" should snap back to that type, not to "All" — a
   // Prescribers page shouldn't be able to reset its way into showing
@@ -575,6 +655,7 @@
             applyUrlFilters();
             updateHeading();
             render(document.getElementById('searchInput').value);
+            injectStructuredData();
           }catch(err){
             showError("Could not read the spreadsheet data. Double check the sheet is shared as 'Anyone with the link can view'.");
           }
@@ -582,6 +663,74 @@
       }
     }
   };
+
+  // Builds schema.org structured data (an ItemList of Physician entries) from
+  // the full, unfiltered directory so search engines can understand this page
+  // lists specific named providers — even though there's one URL for all of
+  // them. This runs against allRows (not the current filtered/search view),
+  // so the structured data always reflects the entire roster.
+  function buildPhysicianJsonLd(){
+    const typeKey = headers.find(h => /^type$/i.test(h));
+    const locationKey = headers.find(h => /^location$/i.test(h));
+    const titleKey = headers.find(h => /^title$/i.test(h));
+    const firstKey = headers.find(h => /^first(\s|_)?name$/i.test(h));
+    const lastKey = headers.find(h => /^last(\s|_)?name$/i.test(h));
+    const fallbackNameKey = headers.find(h => /name/i.test(h)) || headers[0];
+    const photoUrlKey = headers.find(h => /^photo(\s|_)?(url)?$/i.test(h));
+    const bioKey = headers.find(h => /^biography$/i.test(h));
+    const npiKey = headers.find(h => /^npi$/i.test(h));
+
+    const items = allRows.map((row, i) => {
+      const name = (firstKey && lastKey)
+        ? `${row[firstKey] || ""} ${row[lastKey] || ""}`.trim()
+        : (row[fallbackNameKey] || "").trim();
+      if (!name) return null;
+
+      const physician = { "@type": "Physician", "name": name };
+
+      if (titleKey && row[titleKey] && row[titleKey].trim()){
+        physician.honorificSuffix = row[titleKey].trim();
+      }
+      if (typeKey && row[typeKey] && row[typeKey].trim()){
+        physician.jobTitle = row[typeKey].trim();
+      }
+      if (photoUrlKey && row[photoUrlKey] && row[photoUrlKey].trim()){
+        physician.image = row[photoUrlKey].trim();
+      }
+      if (locationKey && row[locationKey] && row[locationKey].trim()){
+        const parts = formatLocation(row[locationKey]).split(",").map(s => s.trim());
+        physician.address = { "@type": "PostalAddress", "addressLocality": parts[0] };
+        if (parts[1]) physician.address.addressRegion = parts[1];
+      }
+      if (npiKey && row[npiKey] && row[npiKey].trim()){
+        physician.identifier = { "@type": "PropertyValue", "propertyID": "NPI", "value": row[npiKey].trim() };
+      }
+      if (bioKey && row[bioKey] && row[bioKey].trim()){
+        const bio = row[bioKey].trim();
+        physician.description = bio.length > 300 ? bio.slice(0, 297) + "..." : bio;
+      }
+
+      return { "@type": "ListItem", "position": i + 1, "item": physician };
+    }).filter(Boolean);
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": document.getElementById('pageHeading') ? document.getElementById('pageHeading').textContent : "Provider Directory",
+      "itemListElement": items
+    };
+  }
+
+  function injectStructuredData(){
+    let script = document.getElementById('providerStructuredData');
+    if (!script){
+      script = document.createElement('script');
+      script.type = "application/ld+json";
+      script.id = "providerStructuredData";
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(buildPhysicianJsonLd());
+  }
 
   function showError(msg){
     document.getElementById('status').textContent = "";
@@ -832,10 +981,14 @@
       ? ` <button type="button" class="reset-btn" id="scopeResetFilters">Reset filters</button>`
       : "";
 
+    const bioToggleHtml = ` <button type="button" class="bio-global-toggle" id="bioGlobalToggle" aria-pressed="${biosVisible}">` +
+      `<span class="bio-global-toggle-track"><span class="bio-global-toggle-thumb"></span></span>` +
+      `Biographies ${biosVisible ? "on" : "off"}</button>`;
+
     if (parts.length === 0){
-      scopeLine.innerHTML = `Showing ${subjectHtml}. ${countText}${resetHtml}`;
+      scopeLine.innerHTML = `Showing ${subjectHtml}. ${countText}${bioToggleHtml}${resetHtml}`;
     } else {
-      scopeLine.innerHTML = `Showing ${subjectHtml} ${parts.join(" ")}. ${countText}${resetHtml}`;
+      scopeLine.innerHTML = `Showing ${subjectHtml} ${parts.join(" ")}. ${countText}${bioToggleHtml}${resetHtml}`;
     }
   }
 
@@ -878,14 +1031,18 @@
     if (q !== ""){
       filtered = filtered.filter(row => {
         const fullName = `${row["First Name"] || ""} ${row["Last Name"] || ""}`.toLowerCase();
-        return fullName.includes(q) ||
-          Object.values(row).some(v => v.toLowerCase().includes(q));
+        return fullName.includes(q);
       });
     }
 
     const lastNameKey = headers.find(h => /^last(\s|_)?name$/i.test(h));
     const sortKey = lastNameKey || headers.find(h => /name/i.test(h)) || headers[0];
     filtered = [...filtered].sort((a, b) => {
+      const aIsMD = titleKey && (a[titleKey] || "").trim().toUpperCase() === "MD" ? 0 : 1;
+      const bIsMD = titleKey && (b[titleKey] || "").trim().toUpperCase() === "MD" ? 0 : 1;
+      if (aIsMD !== bIsMD){
+        return sortDirection === "asc" ? aIsMD - bIsMD : bIsMD - aIsMD;
+      }
       const cmp = (a[sortKey] || "").toLowerCase().localeCompare((b[sortKey] || "").toLowerCase());
       return sortDirection === "asc" ? cmp : -cmp;
     });
@@ -964,18 +1121,27 @@
 
       const notAcceptingNew = newPatientsKey && /^no$/i.test((row[newPatientsKey] || "").trim());
       const telehealthHtml = (locationKey && /^remote$/i.test((row[locationKey] || "").trim()) && !notAcceptingNew)
-        ? `<div class="telehealth-note">Telehealth appointments only.</div>`
+        ? `<div class="telehealth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Telehealth appointments only.</div>`
         : "";
 
       const bioHtml = bioText
-        ? `<div class="bio" data-expanded="false">
-            <p class="bio-text" hidden>${highlight(bioText, query)}</p>
-            <button type="button" class="bio-toggle">Read Biography</button>
+        ? `<div class="bio">
+            <p class="bio-text"${biosVisible ? "" : " hidden"}>${highlight(bioText, query)}</p>
           </div>`
         : "";
 
+      const roleDescriptor = typeKey && row[typeKey] && row[typeKey].trim() ? row[typeKey].trim() : "";
+      const locationDescriptor = (locationKey && row[locationKey] && row[locationKey].trim())
+        ? formatLocation(row[locationKey])
+        : "";
+      const photoAlt = [
+        name,
+        roleDescriptor,
+        locationDescriptor ? `in ${locationDescriptor}` : ""
+      ].filter(Boolean).join(", ").replace(/, in /, " in ");
+
       const photoHtml = photoSrc
-        ? `<img class="photo" src="${escapeHtml(photoSrc)}" alt="${escapeHtml(name)}" loading="lazy" onerror="this.remove()" />`
+        ? `<img class="photo" src="${escapeHtml(photoSrc)}" alt="${escapeHtml(photoAlt)}" loading="lazy" onerror="this.remove()" />`
         : `<div class="photo photo-initials">${escapeHtml(initials(plainName))}</div>`;
 
       return `
@@ -983,7 +1149,7 @@
           <div class="card-header">
             ${photoHtml}
             <div class="card-heading">
-              <div class="name">${highlight(name, query)}</div>
+              <h2 class="name">${highlight(name, query)}</h2>
               ${locationBadgeHtml}
             </div>
           </div>
@@ -1012,23 +1178,6 @@
     lightbox.classList.add('open');
   });
 
-  document.getElementById('results').addEventListener('click', (e) => {
-    const btn = e.target.closest('.bio-toggle');
-    if (!btn) return;
-    const bioEl = btn.closest('.bio');
-    const textEl = bioEl.querySelector('.bio-text');
-    const expanded = bioEl.dataset.expanded === "true";
-    if (expanded){
-      textEl.hidden = true;
-      btn.textContent = "Read Biography";
-      bioEl.dataset.expanded = "false";
-    } else {
-      textEl.hidden = false;
-      btn.textContent = "Hide Biography";
-      bioEl.dataset.expanded = "true";
-    }
-  });
-
   document.getElementById('photoLightbox').addEventListener('click', () => {
     document.getElementById('photoLightbox').classList.remove('open');
   });
@@ -1041,9 +1190,24 @@
 
   document.getElementById('scopeLine').addEventListener('click', (e) => {
     if (e.target.closest('#scopeResetFilters')) resetAllFilters();
+    if (e.target.closest('#bioGlobalToggle')){
+      biosVisible = !biosVisible;
+      render(document.getElementById('searchInput').value);
+    }
+  });
+
+  // Shows a "back to top" button once the visitor has scrolled a fair way
+  // down the page, so they don't have to scroll all the way back up
+  // manually after browsing through the provider list.
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  const SCROLL_SHOW_THRESHOLD = 500;
+  window.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('visible', window.scrollY > SCROLL_SHOW_THRESHOLD);
+  }, { passive: true });
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   loadSheet();
 </script>
-</body>
-</html>
+</div>
