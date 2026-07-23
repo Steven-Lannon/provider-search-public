@@ -24,21 +24,26 @@
   body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-    background:var(--bg);
     color:var(--ink);
+  }
+  .page-bg{
+    position:relative;
+    left:50%;
+    right:50%;
+    margin-left:-50vw;
+    margin-right:-50vw;
+    width:100vw;
+    background:var(--bg);
+  }
+  .wrap{
+    max-width:1320px;
+    margin:0 auto;
     padding:32px 20px;
   }
-  .wrap{max-width:1320px;margin:0 auto;}
-  .logo{
-    display:block;
-    height:36px;
-    width:auto;
-    margin-bottom:16px;
-  }
   h1{
-    font-size:22px;
+    font-size:32px;
     font-weight:700;
-    margin:0 0 4px 0;
+    margin:0 0 8px 0;
     letter-spacing:-0.01em;
   }
   .scope-line{
@@ -56,9 +61,17 @@
     font-weight:600;
     font-size:15px;
   }
+  .controls-row{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:16px;
+    margin-bottom:18px;
+  }
   .search-bar{
     position:relative;
-    margin-bottom:18px;
+    flex:1 1 420px;
+    max-width:520px;
   }
   .search-bar input{
     width:100%;
@@ -104,6 +117,13 @@
   }
   @media (max-width:600px){
     .results{grid-template-columns:1fr;}
+  }
+  .filter-group.location-select-group{
+    display:none;
+  }
+  @media (max-width:640px){
+    .filter-group.location-buttons-group{display:none;}
+    .filter-group.location-select-group{display:flex;}
   }
   .card{
     background:var(--card);
@@ -247,6 +267,9 @@
     line-height:1.5;
     color:var(--muted);
   }
+  .card .bio-text{
+    margin:0 0 10px 0;
+  }
   .bio-toggle{
     border:1.5px solid var(--accent);
     background:var(--accent);
@@ -308,7 +331,7 @@
   .reset-btn{
     border:none;
     background:none;
-    color:var(--accent);
+    color:#C0392B;
     font-size:13px;
     font-weight:600;
     cursor:pointer;
@@ -317,14 +340,13 @@
     text-underline-offset:2px;
   }
   .reset-btn:hover{
-    color:#16223C;
+    color:#8E2A20;
   }
   .filter-bar{
     display:flex;
     flex-wrap:wrap;
     align-items:center;
     gap:16px;
-    margin-bottom:18px;
   }
   .filter-group{
     display:flex;
@@ -333,6 +355,13 @@
     flex-wrap:wrap;
   }
   .filter-label{
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:var(--muted);
+  }
+  .filter-sublabel{
     font-size:12px;
     font-weight:700;
     text-transform:uppercase;
@@ -377,6 +406,22 @@
   .filter-select:focus{
     border-color:var(--accent);
   }
+  .select-wrap{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+  }
+  .select-wrap svg{
+    position:absolute;
+    left:12px;
+    width:14px;
+    height:14px;
+    color:var(--muted);
+    pointer-events:none;
+  }
+  .select-wrap .filter-select{
+    padding-left:34px;
+  }
   .count-pill{
     display:inline-block;
     background:var(--accent-soft);
@@ -390,16 +435,19 @@
 </style>
 </head>
 <body>
+<div class="page-bg">
 <div class="wrap">
-  <img class="logo" src="data:image/png;base64,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" alt="Company logo" />
-  <h1>Find Your Clinician (public)</h1>
+  <h1 id="pageHeading">Find Your Clinician</h1>
 
-  <div class="search-bar">
-    <input id="searchInput" type="text" placeholder="Search by name..." autocomplete="off" />
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <div class="controls-row">
+    <div class="search-bar">
+      <input id="searchInput" type="text" placeholder="Search by name..." autocomplete="off" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+
+    <div class="filter-bar" id="filterBarInline"></div>
+    <div class="filter-bar" id="filterBarLocation"></div>
   </div>
-
-  <div class="filter-bar" id="filterBar"></div>
 
   <div class="status" id="status"></div>
   <p class="scope-line" id="scopeLine">Showing <strong>all</strong> providers.</p>
@@ -409,6 +457,7 @@
     <div class="skeleton-card"><div class="skeleton-avatar"></div><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:45%"></div></div>
     <div class="skeleton-card"><div class="skeleton-avatar"></div><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:45%"></div></div>
   </div>
+</div>
 </div>
 
 <div class="photo-lightbox" id="photoLightbox">
@@ -437,6 +486,7 @@
     "Age Range",
     "New Patients",
     "Any Patients",
+    "Biography",
     "Photo URL"
   ];
   // ============================
@@ -477,6 +527,11 @@
   let activeTitle = "All";
   let activeSex = "All";
   let sortDirection = "asc";
+  // If this page's URL locks it to a specific type (e.g. /prescribers),
+  // "Reset filters" should snap back to that type, not to "All" — a
+  // Prescribers page shouldn't be able to reset its way into showing
+  // Therapists too.
+  let lockedType = "All";
 
   function buildUrl(){
     let url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
@@ -517,6 +572,8 @@
             }).filter(row => Object.values(row).some(v => v && v.trim() !== ""));
 
             populateFilters();
+            applyUrlFilters();
+            updateHeading();
             render(document.getElementById('searchInput').value);
           }catch(err){
             showError("Could not read the spreadsheet data. Double check the sheet is shared as 'Anyone with the link can view'.");
@@ -538,45 +595,134 @@
     document.body.appendChild(script);
   }
 
+  // Lets a page embedding this tool link directly to a pre-filtered view,
+  // e.g. index.html?type=Therapist or index.html?type=Prescriber&location=Albany
+  // This is what lets one file serve multiple Squarespace pages (Therapists,
+  // Prescribers, etc.) without duplicating any code — each page's embed just
+  // points to a different query string.
+  //
+  // Some page builders (Squarespace's Code Block included, in some setups)
+  // run pasted <script> tags in a context whose own location doesn't match
+  // what's visible in the browser's address bar. So we first try reading
+  // the real top-level page URL, and only fall back to this script's own
+  // location if that's not accessible (e.g. blocked by browser security).
+  function getPageLocation(){
+    try {
+      if (window.top && window.top.location && window.top.location.href !== undefined){
+        return window.top.location;
+      }
+    } catch (e) {
+      // Cross-origin or otherwise blocked — fall through to the default below.
+    }
+    return window.location;
+  }
+
+  // If there's no explicit ?type= in the URL, guess the intended type from
+  // the page's own URL slug — so a plain link like evolvepsychiatry.com/prescribers
+  // (no query string at all) still auto-filters correctly. Add more keywords
+  // here if you create more type-specific pages later.
+  function typeFromPath(pathname){
+    const path = (pathname || "").toLowerCase();
+    if (path.includes("prescriber")) return "Prescriber";
+    if (path.includes("therapist")) return "Therapist";
+    return null;
+  }
+
+  function applyUrlFilters(){
+    const loc = getPageLocation();
+    const params = new URLSearchParams(loc.search);
+
+    // Type no longer has toggle buttons, so match the requested value
+    // directly against the distinct Type values found in the spreadsheet.
+    const typeKey = headers.find(h => /^type$/i.test(h));
+    if (typeKey){
+      const requestedType = params.get('type') || typeFromPath(loc.pathname);
+      if (requestedType){
+        const knownTypes = [...new Set(allRows.map(r => (r[typeKey] || "").trim()).filter(Boolean))];
+        const matchedType = knownTypes.find(t => t.toLowerCase() === requestedType.trim().toLowerCase());
+        if (matchedType){
+          activeType = matchedType;
+          lockedType = matchedType;
+        }
+      }
+    }
+
+    function applyToButtons(paramName, filterName, setter){
+      const val = params.get(paramName);
+      if (!val) return;
+      const btns = document.querySelectorAll(`#filterBarLocation button[data-filter="${filterName}"]`);
+      let matched = null;
+      btns.forEach(b => {
+        if (b.dataset.value.toLowerCase() === val.trim().toLowerCase()) matched = b;
+      });
+      if (matched){
+        btns.forEach(b => b.classList.remove('active'));
+        matched.classList.add('active');
+        setter(matched.dataset.value);
+        const mobileSelect = document.querySelector('#filterBarLocation select[data-filter="location-mobile"]');
+        if (mobileSelect) mobileSelect.value = matched.dataset.value;
+      }
+    }
+
+    function applyToSelect(paramName, filterName, setter){
+      const val = params.get(paramName);
+      if (!val) return;
+      const select = document.querySelector(`#filterBarInline select[data-filter="${filterName}"]`);
+      if (!select) return;
+      const match = [...select.options].find(o => o.value.toLowerCase() === val.trim().toLowerCase());
+      if (match){
+        select.value = match.value;
+        setter(match.value);
+      }
+    }
+
+    applyToButtons('location', 'location', v => activeLocation = v);
+    applyToSelect('sex', 'sex', v => activeSex = v);
+
+    const q = params.get('q');
+    if (q) document.getElementById('searchInput').value = q;
+  }
+
+  // Sets the page heading based on which type (if any) this page is
+  // locked to — e.g. "Find Your Prescriber" on the Prescribers page,
+  // "Find Your Therapist" on the Therapists page, or the generic
+  // "Find Your Clinician" when there's no locked type at all.
+  // Short blurb shown under the heading, per type. Add an entry here if
+  // you ever lock another page to a new Type value.
+  function updateHeading(){
+    const heading = document.getElementById('pageHeading');
+    if (!heading) return;
+    if (lockedType && lockedType !== "All"){
+      heading.textContent = `Meet Our ${lockedType}s`;
+    } else {
+      heading.textContent = "Find Your Clinician";
+    }
+  }
+
   function resetAllFilters(){
-    activeType = "All";
+    activeType = lockedType;
     activeLocation = "All";
     activeTitle = "All";
     activeSex = "All";
     document.getElementById('searchInput').value = "";
-    document.querySelectorAll('#filterBar button[data-filter]').forEach(b => {
+    document.querySelectorAll('#filterBarLocation button[data-filter]').forEach(b => {
       b.classList.toggle('active', b.dataset.value === "All");
+    });
+    document.querySelectorAll('#filterBarLocation select[data-filter], #filterBarInline select[data-filter]').forEach(s => {
+      s.value = "All";
     });
     render("");
   }
 
   function populateFilters(){
-    const filterBar = document.getElementById('filterBar');
+    const filterBarInline = document.getElementById('filterBarInline');
+    const filterBarLocation = document.getElementById('filterBarLocation');
     const typeKey = headers.find(h => /^type$/i.test(h));
     const locationKey = headers.find(h => /^location$/i.test(h));
     const titleKey = headers.find(h => /^title$/i.test(h));
     const sexKey = headers.find(h => /^sex$/i.test(h));
 
-    let html = "";
-
-    if (typeKey){
-      const types = [...new Set(allRows.map(r => (r[typeKey] || "").trim()).filter(Boolean))].sort();
-      html += `<div class="filter-group">
-        <span class="filter-label">Type</span>
-        <button class="filter-btn active" data-filter="type" data-value="All">All</button>
-        ${types.map(t => `<button class="filter-btn" data-filter="type" data-value="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join("")}
-      </div>`;
-    }
-
-    if (sexKey){
-      const sexes = [...new Set(allRows.map(r => (r[sexKey] || "").trim()).filter(Boolean))].sort();
-      html += `<div class="filter-group">
-        <span class="filter-label">Sex</span>
-        <button class="filter-btn active" data-filter="sex" data-value="All">All</button>
-        ${sexes.map(s => `<button class="filter-btn" data-filter="sex" data-value="${escapeHtml(s)}">${escapeHtml(s)}</button>`).join("")}
-      </div>`;
-    }
-
+    let locationHtml = "";
     if (locationKey){
       const locations = [...new Set(allRows.map(r => (r[locationKey] || "").trim()).filter(Boolean))]
         .sort((a, b) => {
@@ -586,41 +732,72 @@
           if (bRemote && !aRemote) return -1;
           return a.localeCompare(b);
         });
-      html += `<div class="filter-group">
+      // Two versions of the same control: buttons for wider screens, a
+      // dropdown for narrow ones. CSS shows only one at a time based on
+      // viewport width; both stay wired to the same activeLocation state.
+      locationHtml = `<div class="filter-group location-buttons-group">
         <span class="filter-label">Location</span>
         <button class="filter-btn active" data-filter="location" data-value="All">All</button>
         ${locations.map(l => `<button class="filter-btn" data-filter="location" data-value="${escapeHtml(l)}">${escapeHtml(formatLocation(l))}</button>`).join("")}
+      </div>
+      <div class="filter-group location-select-group">
+        <span class="filter-label">Location</span>
+        <div class="select-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          <select class="filter-select" data-filter="location-mobile">
+            <option value="All">All</option>
+            ${locations.map(l => `<option value="${escapeHtml(l)}">${escapeHtml(formatLocation(l))}</option>`).join("")}
+          </select>
+        </div>
       </div>`;
     }
+    filterBarLocation.innerHTML = locationHtml;
 
-    filterBar.innerHTML = html;
+    let inlineHtml = "";
+    if (sexKey){
+      const sexes = [...new Set(allRows.map(r => (r[sexKey] || "").trim()).filter(Boolean))].sort();
+      inlineHtml = `<div class="filter-group">
+        <span class="filter-label">Sex</span>
+        <div class="select-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="10" r="5"/><line x1="17.5" y1="6.5" x2="21" y2="3"/><polyline points="21 6 21 3 18 3"/><circle cx="9" cy="14" r="5"/><line x1="9" y1="19" x2="9" y2="23"/><line x1="6" y1="21" x2="12" y2="21"/></svg>
+          <select class="filter-select" data-filter="sex">
+            <option value="All">All</option>
+            ${sexes.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("")}
+          </select>
+        </div>
+      </div>`;
+    }
+    filterBarInline.innerHTML = inlineHtml;
 
-    filterBar.querySelectorAll('button[data-filter="type"]').forEach(btn => {
+    const locationMobileSelect = filterBarLocation.querySelector('select[data-filter="location-mobile"]');
+
+    filterBarLocation.querySelectorAll('button[data-filter="location"]').forEach(btn => {
       btn.addEventListener('click', () => {
-        filterBar.querySelectorAll('button[data-filter="type"]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeType = btn.dataset.value;
-        render(document.getElementById('searchInput').value);
-      });
-    });
-
-    filterBar.querySelectorAll('button[data-filter="location"]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBar.querySelectorAll('button[data-filter="location"]').forEach(b => b.classList.remove('active'));
+        filterBarLocation.querySelectorAll('button[data-filter="location"]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         activeLocation = btn.dataset.value;
+        if (locationMobileSelect) locationMobileSelect.value = btn.dataset.value;
         render(document.getElementById('searchInput').value);
       });
     });
 
-    filterBar.querySelectorAll('button[data-filter="sex"]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBar.querySelectorAll('button[data-filter="sex"]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeSex = btn.dataset.value;
+    if (locationMobileSelect){
+      locationMobileSelect.addEventListener('change', () => {
+        activeLocation = locationMobileSelect.value;
+        filterBarLocation.querySelectorAll('button[data-filter="location"]').forEach(b => {
+          b.classList.toggle('active', b.dataset.value === locationMobileSelect.value);
+        });
         render(document.getElementById('searchInput').value);
       });
-    });
+    }
+
+    const sexSelect = filterBarInline.querySelector('select[data-filter="sex"]');
+    if (sexSelect){
+      sexSelect.addEventListener('change', () => {
+        activeSex = sexSelect.value;
+        render(document.getElementById('searchInput').value);
+      });
+    }
 
   }
 
@@ -628,11 +805,14 @@
     const scopeLine = document.getElementById('scopeLine');
     const parts = [];
 
-    const forItems = [];
-    if (activeType !== "All") forItems.push(`${activeType}s`);
-    if (activeTitle !== "All") forItems.push(activeTitle);
-    if (forItems.length > 0){
-      parts.push(`for ${forItems.map(t => `<strong>${escapeHtml(t)}</strong>`).join(", ")}`);
+    // Type is the subject noun itself ("all Prescribers") rather than a
+    // "for" clause, so it reads naturally: "Showing all Prescribers in Albany, NY."
+    const subjectHtml = activeType !== "All"
+      ? `<strong>all ${escapeHtml(activeType)}s</strong>`
+      : `<strong>all</strong> providers`;
+
+    if (activeTitle !== "All"){
+      parts.push(`for <strong>${escapeHtml(activeTitle)}</strong>`);
     }
 
     if (activeLocation !== "All"){
@@ -646,16 +826,16 @@
     const countText = `<span class="scope-count">(${count} ${count === 1 ? 'result' : 'results'})</span>`;
 
     const query = document.getElementById('searchInput').value.trim();
-    const anyFilterActive = activeType !== "All" || activeLocation !== "All" ||
+    const anyFilterActive = activeType !== lockedType || activeLocation !== "All" ||
       activeTitle !== "All" || activeSex !== "All" || query !== "";
     const resetHtml = anyFilterActive
       ? ` <button type="button" class="reset-btn" id="scopeResetFilters">Reset filters</button>`
       : "";
 
     if (parts.length === 0){
-      scopeLine.innerHTML = `Showing <strong>all</strong> providers. ${countText}${resetHtml}`;
+      scopeLine.innerHTML = `Showing ${subjectHtml}. ${countText}${resetHtml}`;
     } else {
-      scopeLine.innerHTML = `Showing <strong>all</strong> ${parts.join(" ")}. ${countText}${resetHtml}`;
+      scopeLine.innerHTML = `Showing ${subjectHtml} ${parts.join(" ")}. ${countText}${resetHtml}`;
     }
   }
 
@@ -752,6 +932,10 @@
       const anyPatientsKey = headers.find(h => /^any(\s|_)?patients$/i.test(h));
       if (anyPatientsKey) skipKeys.push(anyPatientsKey);
 
+      const bioKey = headers.find(h => /^biography$/i.test(h));
+      if (bioKey) skipKeys.push(bioKey);
+      const bioText = bioKey && row[bioKey] ? row[bioKey].trim() : "";
+
       if (locationKey) skipKeys.push(locationKey);
       const locationBadgeHtml = (locationKey && row[locationKey] && row[locationKey].trim())
         ? `<span class="location-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>${highlight(formatLocation(row[locationKey]), query)}</span>`
@@ -783,9 +967,12 @@
         ? `<div class="telehealth-note">Telehealth appointments only.</div>`
         : "";
 
-      const bioHtml = `<div class="bio">
-          <button type="button" class="bio-toggle">Read Biography</button>
-        </div>`;
+      const bioHtml = bioText
+        ? `<div class="bio" data-expanded="false">
+            <p class="bio-text" hidden>${highlight(bioText, query)}</p>
+            <button type="button" class="bio-toggle">Read Biography</button>
+          </div>`
+        : "";
 
       const photoHtml = photoSrc
         ? `<img class="photo" src="${escapeHtml(photoSrc)}" alt="${escapeHtml(name)}" loading="lazy" onerror="this.remove()" />`
@@ -823,6 +1010,23 @@
     lightboxImg.src = img.src;
     lightboxImg.alt = img.alt;
     lightbox.classList.add('open');
+  });
+
+  document.getElementById('results').addEventListener('click', (e) => {
+    const btn = e.target.closest('.bio-toggle');
+    if (!btn) return;
+    const bioEl = btn.closest('.bio');
+    const textEl = bioEl.querySelector('.bio-text');
+    const expanded = bioEl.dataset.expanded === "true";
+    if (expanded){
+      textEl.hidden = true;
+      btn.textContent = "Read Biography";
+      bioEl.dataset.expanded = "false";
+    } else {
+      textEl.hidden = false;
+      btn.textContent = "Hide Biography";
+      bioEl.dataset.expanded = "true";
+    }
   });
 
   document.getElementById('photoLightbox').addEventListener('click', () => {
